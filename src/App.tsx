@@ -2,7 +2,8 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import { Home } from "./components/Home";
 import { Modal } from "./components/Modal";
 import "./App.css";
-import { Modal2 } from "./components/Modal2";
+import { ModalLayout } from "./components/ModalLayout";
+import Gallery from "./components/Gallery";
 
 function App() {
   const location = useLocation();
@@ -11,15 +12,16 @@ function App() {
   return (
     <div className="App">
       <Routes location={background || location}>
-        <Route path="/" element={<Home />}>
-          <Route path="/modal" element={<Modal />} />
+        <Route path="/" element={<Home />} />
+        <Route element={<ModalLayout />}>
+          <Route path="modal/:id" element={<Gallery />} />
         </Route>
-        <Route path="/modal2" element={<Modal2 />} />
       </Routes>
       {background && (
         <Routes>
-          <Route path="modal" element={<Modal />} />
-          <Route path="modal2" element={<Modal2 />} />
+          <Route element={<ModalLayout />}>
+            <Route path="modal/:id" element={<Gallery />} />
+          </Route>
         </Routes>
       )}
     </div>
