@@ -1,10 +1,9 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useOutletContext } from "react-router-dom";
 import { Modal } from "./Modal";
+import React, { useState } from "react";
 
 export const ModalLayout = () => {
   const { state } = useLocation();
-
-  console.log(state);
   return state?.background ? (
     <Modal>
       <Outlet />
