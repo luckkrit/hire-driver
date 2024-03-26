@@ -11,8 +11,8 @@ function App() {
   return (
     <ModalProvider>
       <Routes location={background || location}>
+        <Route path="/" element={<Home />} />
         <Route element={<ModalLayout />}>
-          <Route path="/" element={<Home />} />
           <Route path="booknow/:id" element={<ScreenBookNow />} />
           <Route path="bookdate/:id" element={<ScreenBookDate />} />
         </Route>

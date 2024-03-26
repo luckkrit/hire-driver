@@ -19,6 +19,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "leaflet": "^1.9.4",
+    "leaflet-geosearch": "^3.11.1",
     "react": "link:@types/heroicons/react",
     "react-dom": "^18.2.0",
     "react-icons": "^5.0.1",

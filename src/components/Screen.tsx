@@ -1,4 +1,4 @@
-import {
+import React, {
   Children,
   HTMLAttributes,
   PropsWithChildren,
@@ -13,6 +13,8 @@ import { TimeListbox } from "./TimeListbox";
 import { RoundedButton } from "./RoundedButton";
 import { UpDownCounter } from "./UpDownCounter";
 import { RadioButton } from "./RadioButton";
+import { DestinationMap } from "./DestinationMap";
+import { AutocompleteLocation } from "./AutocompleteLocation";
 
 const ChooseProvices = () => {
   return (
@@ -61,7 +63,7 @@ const HireDuration = () => {
   const [count, setCount] = useState(1);
   const PER_HOUR_PRICE = 2400;
   return (
-    <div className="flex flex-col grow gap-4 w-full h-full p-4">
+    <div className="flex flex-col grow gap-2 w-full h-full p-4">
       <h2 className="flex justify-center text-xl py-4">
         ระยะเวลาที่คุณต้องการบริการคนขับรถ
       </h2>
@@ -119,8 +121,8 @@ const HireDuration = () => {
           </fieldset>
         </div>
       </div>
-      <hr className="w-full h-0.5 my-2" />
-      <div className="flex flex-col justify-start w-full p-4">
+      <hr className="w-full h-0.5 my-1" />
+      <div className="flex flex-col justify-start w-full px-4">
         <h5 className="font-bold text-start text-slate-500">
           เงื่อนไขการให้บริการ
         </h5>
@@ -189,7 +191,7 @@ const DestinationAddress = () => {
         </div>
       </div>
 
-      <div className={(byManual ? "visible" : "invisible") + " w-full"}>
+      <div className={(byManual ? "visible" : "hidden") + " w-full"}>
         <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div className="col-span-full">
             <label
@@ -313,17 +315,25 @@ const DestinationAddress = () => {
           </div>
         </div>
       </div>
+      <div className={(byMap ? "visible" : "hidden") + " w-full"}>
+        <div className="flex flex-col gap-2">
+          <AutocompleteLocation />
+          <DestinationMap />
+        </div>
+      </div>
     </div>
   );
 };
 
 interface NavigatorProps {
   screenIndex: number;
+  totalScreen: number;
   onPrevClick: () => void;
   onNextClick: () => void;
 }
 const Navigator = ({
   screenIndex,
+  totalScreen,
   children,
   onPrevClick,
   onNextClick,
@@ -337,17 +347,21 @@ const Navigator = ({
             className="px-8 py-2 bg-green-800 text-white"
             onClick={onPrevClick}
           >
+            ก่อนหน้า
+          </button>
+        ) : (
+          <div></div>
+        )}
+        {totalScreen > 0 && screenIndex + 1 <= totalScreen ? (
+          <button
+            className="px-8 py-2 bg-green-800 text-white"
+            onClick={onNextClick}
+          >
             ถัดไป
           </button>
         ) : (
           <div></div>
         )}
-        <button
-          className="px-8 py-2 bg-green-800 text-white"
-          onClick={onNextClick}
-        >
-          ก่อนหน้า
-        </button>
       </div>
     </div>
   );
@@ -355,12 +369,17 @@ const Navigator = ({
 
 interface ScreensProps {
   screenIndex: number;
+  setTotalScreen: React.Dispatch<React.SetStateAction<number>>;
 }
 const Screens = ({
   children,
   screenIndex,
+  setTotalScreen,
 }: PropsWithChildren<ScreensProps>) => {
   const arrayChildren = Children.toArray(children);
+  useEffect(() => {
+    setTotalScreen(() => arrayChildren.length);
+  }, [arrayChildren.length]);
   if (screenIndex - 1 < arrayChildren.length && screenIndex > 0) {
     return arrayChildren[screenIndex - 1];
   }
@@ -371,11 +390,20 @@ export const ScreenBookDate = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const background = location.state && location.state.background;
+  useEffect(() => {
+    if (background === undefined || background === null) {
+      navigate("/", {
+        replace: true,
+      });
+    }
+  }, []);
+  const [totalScreen, setTotalScreen] = useState(0);
   const { id } = useParams();
   if (id !== undefined) {
     return (
       <Navigator
         screenIndex={Number(id)}
+        totalScreen={totalScreen}
         onNextClick={() => {
           navigate("/bookdate/" + (Number(id) + 1), {
             state: { background },
@@ -383,7 +411,7 @@ export const ScreenBookDate = () => {
         }}
         onPrevClick={() => {}}
       >
-        <Screens screenIndex={Number(id)}>
+        <Screens screenIndex={Number(id)} setTotalScreen={setTotalScreen}>
           <ChooseProvices />
           <BookDate />
           <HireDuration />
@@ -398,11 +426,20 @@ export const ScreenBookNow = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const background = location.state && location.state.background;
+  useEffect(() => {
+    if (background === undefined || background === null) {
+      navigate("/", {
+        replace: true,
+      });
+    }
+  }, []);
+  const [totalScreen, setTotalScreen] = useState(0);
   const { id } = useParams();
   if (id !== undefined) {
     return (
       <Navigator
         screenIndex={Number(id)}
+        totalScreen={totalScreen}
         onNextClick={() => {
           navigate("/booknow/" + (Number(id) + 1), {
             state: { background },
@@ -412,7 +449,7 @@ export const ScreenBookNow = () => {
           navigate(-1);
         }}
       >
-        <Screens screenIndex={Number(id)}>
+        <Screens screenIndex={Number(id)} setTotalScreen={setTotalScreen}>
           <ChooseProvices />
           <BookNow />
           <HireDuration />
