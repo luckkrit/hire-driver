@@ -390,13 +390,6 @@ export const ScreenBookDate = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const background = location.state && location.state.background;
-  useEffect(() => {
-    if (background === undefined || background === null) {
-      navigate("/", {
-        replace: true,
-      });
-    }
-  }, []);
   const [totalScreen, setTotalScreen] = useState(0);
   const { id } = useParams();
   if (id !== undefined) {
@@ -426,13 +419,6 @@ export const ScreenBookNow = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const background = location.state && location.state.background;
-  useEffect(() => {
-    if (background === undefined || background === null) {
-      navigate("/", {
-        replace: true,
-      });
-    }
-  }, []);
   const [totalScreen, setTotalScreen] = useState(0);
   const { id } = useParams();
   if (id !== undefined) {

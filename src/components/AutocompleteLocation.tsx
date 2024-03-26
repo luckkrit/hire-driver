@@ -6,17 +6,28 @@ import thai_provinces from "../assets/thai_provinces.json";
 import thai_amphures from "../assets/thai_amphures.json";
 
 const getProvinces = () => {
-  return thai_provinces.map((province) => province.name_th + ", ประเทศไทย");
+  return thai_provinces.map((province) => ({
+    id: province.id,
+    name_th: province.name_th + ", ประเทศไทย",
+  }));
 };
 
 const getAmphuresProvinces = () => {
   return thai_amphures.map((amphur) => {
     const province = thai_provinces.find((p) => p.id === amphur.province_id);
     if (province !== undefined) {
-      return amphur.name_th + ", " + province.name_th + ", ประเทศไทย";
+      return {
+        id: amphur.id,
+        name_th: amphur.name_th + ", " + province.name_th + ", ประเทศไทย",
+      };
     }
   });
 };
+
+interface Location {
+  id: number;
+  name_th: string;
+}
 
 interface People {
   id: number;
@@ -30,15 +41,28 @@ const people: People[] = [
   { id: 5, name: "Tanya Fox" },
   { id: 6, name: "Hellen Schmidt" },
 ];
+
+const provinces = getProvinces();
+const amphures = getAmphuresProvinces();
+const allLocations = [...provinces, amphures];
 export const AutocompleteLocation = () => {
-  useEffect(() => {
-    console.log(getProvinces());
-    console.log("-----");
-    console.log(getAmphuresProvinces());
-  }, []);
-  const [selected, setSelected] = useState(people[0]);
+  //   useEffect(() => {
+  //     console.log(getProvinces());
+  //     console.log("-----");
+  //     console.log(getAmphuresProvinces());
+  //   }, []);
+  const [selected, setSelected] = useState<Location | null>(null);
   const [query, setQuery] = useState("");
 
+  const filteredLocation =
+    query === ""
+      ? allLocations
+      : allLoations.filter((location) =>
+          location.name_th
+            .toLowerCase()
+            .replace(/\s+/g, "")
+            .includes(query.toLowerCase().replace(/\s+/g, ""))
+        );
   const filteredPeople =
     query === ""
       ? people
